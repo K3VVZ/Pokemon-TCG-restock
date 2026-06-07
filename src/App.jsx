@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-
+ 
 const PRODUCTS = [
   { id: 1, name: "Prismatic Evolutions ETB", retailer: "Smyths", price: "£54.99", status: "OUT", hot: true },
   { id: 2, name: "Surging Sparks Booster Box", retailer: "Zatu", price: "£109.99", status: "IN", hot: true },
@@ -8,7 +8,7 @@ const PRODUCTS = [
   { id: 5, name: "Paldean Fates ETB", retailer: "Pokémon Center", price: "£49.99", status: "OUT", hot: true },
   { id: 6, name: "Temporal Forces Booster Box", retailer: "Card Market", price: "£99.99", status: "OUT", hot: false },
 ];
-
+ 
 const ALERT_FEED = [
   { id: 1, product: "Prismatic Evolutions ETB", retailer: "Smyths", time: "2m ago", price: "£54.99" },
   { id: 2, product: "Paldean Fates ETB", retailer: "Amazon UK", time: "14m ago", price: "£44.99" },
@@ -16,7 +16,7 @@ const ALERT_FEED = [
   { id: 4, product: "Prismatic Evolutions ETB", retailer: "365Games", time: "1h ago", price: "£54.99" },
   { id: 5, product: "Temporal Forces Booster Box", retailer: "Pokémon Center", time: "2h ago", price: "£99.99" },
 ];
-
+ 
 const PLANS = [
   {
     name: "Free",
@@ -27,7 +27,7 @@ const PLANS = [
     highlight: false,
   },
   {
-    name: "Reseller",
+    name: "Tracker",
     price: "£7.99",
     period: "/ month",
     features: ["Unlimited watchlist", "Instant alerts < 2 min", "UK + Global retailers", "Discord notifications", "Price history"],
@@ -43,24 +43,24 @@ const PLANS = [
     highlight: false,
   },
 ];
-
+ 
 // Animated canvas background — slow flowing ink blobs
 function InkBackground() {
   const canvasRef = useRef(null);
-
+ 
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     let animId;
     let t = 0;
-
+ 
     const resize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     };
     resize();
     window.addEventListener("resize", resize);
-
+ 
     // Blob definitions
     const blobs = [
       { x: 0.15, y: 0.2,  r: 0.38, dx: 0.00012, dy: 0.00008,  dark: true  },
@@ -69,23 +69,23 @@ function InkBackground() {
       { x: 0.30, y: 0.80, r: 0.22, dx: -0.00008, dy: 0.00009,  dark: false },
       { x: 0.70, y: 0.15, r: 0.25, dx: 0.00009,  dy: -0.00011, dark: true  },
     ];
-
+ 
     const draw = () => {
       t += 1;
       const W = canvas.width, H = canvas.height;
-
+ 
       ctx.clearRect(0, 0, W, H);
-
+ 
       // White base
       ctx.fillStyle = "#f8f8f8";
       ctx.fillRect(0, 0, W, H);
-
+ 
       blobs.forEach((b, i) => {
         // Gently drift using sin/cos so they loop smoothly
         const bx = (b.x + Math.sin(t * b.dx * 1000 + i * 1.3) * 0.18) * W;
         const by = (b.y + Math.cos(t * b.dy * 1000 + i * 0.9) * 0.14) * H;
         const br = b.r * Math.min(W, H);
-
+ 
         const grad = ctx.createRadialGradient(bx, by, 0, bx, by, br);
         if (b.dark) {
           grad.addColorStop(0,   "rgba(0,0,0,0.55)");
@@ -96,26 +96,26 @@ function InkBackground() {
           grad.addColorStop(0.5, "rgba(200,200,200,0.25)");
           grad.addColorStop(1,   "rgba(200,200,200,0)");
         }
-
+ 
         ctx.beginPath();
         ctx.arc(bx, by, br, 0, Math.PI * 2);
         ctx.fillStyle = grad;
         ctx.fill();
       });
-
+ 
       // Subtle noise grain overlay via tiny dots
       // (skipped for perf — CSS grain filter handles this)
-
+ 
       animId = requestAnimationFrame(draw);
     };
-
+ 
     draw();
     return () => {
       cancelAnimationFrame(animId);
       window.removeEventListener("resize", resize);
     };
   }, []);
-
+ 
   return (
     <canvas
       ref={canvasRef}
@@ -127,7 +127,7 @@ function InkBackground() {
     />
   );
 }
-
+ 
 function Toast({ alert, onDismiss }) {
   useEffect(() => { const t = setTimeout(onDismiss, 5000); return () => clearTimeout(t); }, []);
   return (
@@ -145,7 +145,7 @@ function Toast({ alert, onDismiss }) {
     </div>
   );
 }
-
+ 
 // Glass card wrapper
 const Glass = ({ children, style = {} }) => (
   <div style={{
@@ -158,7 +158,7 @@ const Glass = ({ children, style = {} }) => (
     ...style,
   }}>{children}</div>
 );
-
+ 
 export default function App() {
   const [tab, setTab] = useState("dashboard");
   const [email, setEmail] = useState("");
@@ -168,7 +168,7 @@ export default function App() {
   const [watchlist, setWatchlist] = useState([1, 5]);
   const [alertFeed, setAlertFeed] = useState(ALERT_FEED);
   const [liveCount, setLiveCount] = useState(847);
-
+ 
   useEffect(() => {
     const interval = setInterval(() => {
       const p = PRODUCTS[Math.floor(Math.random() * PRODUCTS.length)];
@@ -181,9 +181,9 @@ export default function App() {
     }, 13000);
     return () => clearInterval(interval);
   }, []);
-
+ 
   const toggleWatch = id => setWatchlist(prev => prev.includes(id) ? prev.filter(w => w !== id) : [...prev, id]);
-
+ 
   return (
     <div style={{ minHeight: "100vh", fontFamily: "'Instrument Sans', 'Helvetica Neue', Helvetica, sans-serif", position: "relative" }}>
       <style>{`
@@ -203,11 +203,11 @@ export default function App() {
         ::-webkit-scrollbar { width:3px; }
         ::-webkit-scrollbar-thumb { background:rgba(0,0,0,0.15); border-radius:2px; }
       `}</style>
-
+ 
       <InkBackground />
-
+ 
       {toast && <Toast alert={toast} onDismiss={() => setToast(null)} />}
-
+ 
       {/* Header */}
       <header style={{
         position: "sticky", top: 0, zIndex: 100,
@@ -222,7 +222,7 @@ export default function App() {
           <span style={{ fontFamily: "'Instrument Serif', serif", fontStyle: "italic", fontSize: 21, letterSpacing: "-0.02em", color: "#111" }}>TCGRestock</span>
           <span style={{ fontSize: 9, background: "#111", color: "#fff", borderRadius: 4, padding: "2px 7px", fontWeight: 700, letterSpacing: "0.08em" }}>BETA</span>
         </div>
-
+ 
         <nav style={{ display: "flex", gap: 2 }}>
           {["dashboard", "watchlist", "alerts", "pricing"].map(t => (
             <button key={t} className="nav-btn" onClick={() => setTab(t)} style={{
@@ -233,15 +233,15 @@ export default function App() {
             }}>{t}</button>
           ))}
         </nav>
-
+ 
         <div style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 12, color: "#999" }}>
           <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#111", display: "inline-block", animation: "blink 2s infinite" }} />
           {liveCount.toLocaleString()} watching
         </div>
       </header>
-
+ 
       <main style={{ maxWidth: 1080, margin: "0 auto", padding: "40px 24px", position: "relative", zIndex: 1 }}>
-
+ 
         {/* DASHBOARD */}
         {tab === "dashboard" && (
           <div style={{ animation: "fadeUp 0.4s ease" }}>
@@ -251,7 +251,7 @@ export default function App() {
               </h1>
               <p style={{ color: "#888", fontSize: 14, marginTop: 10 }}>Tracking 2,400+ products across 18 UK & global retailers.</p>
             </div>
-
+ 
             {/* Stats */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12, marginBottom: 24 }}>
               {[
@@ -266,7 +266,7 @@ export default function App() {
                 </Glass>
               ))}
             </div>
-
+ 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 310px", gap: 16 }}>
               {/* Product table */}
               <Glass style={{ overflow: "hidden" }}>
@@ -300,7 +300,7 @@ export default function App() {
                   </div>
                 ))}
               </Glass>
-
+ 
               {/* Right col */}
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                 {/* Alert feed */}
@@ -324,7 +324,7 @@ export default function App() {
                     </div>
                   ))}
                 </Glass>
-
+ 
                 {/* Email CTA */}
                 <div style={{
                   background: "rgba(10,10,10,0.82)",
@@ -361,7 +361,7 @@ export default function App() {
             </div>
           </div>
         )}
-
+ 
         {/* WATCHLIST */}
         {tab === "watchlist" && (
           <div style={{ animation: "fadeUp 0.35s ease" }}>
@@ -404,7 +404,7 @@ export default function App() {
             </Glass>
           </div>
         )}
-
+ 
         {/* ALERTS */}
         {tab === "alerts" && (
           <div style={{ animation: "fadeUp 0.35s ease" }}>
@@ -433,7 +433,7 @@ export default function App() {
             </Glass>
           </div>
         )}
-
+ 
         {/* PRICING */}
         {tab === "pricing" && (
           <div style={{ animation: "fadeUp 0.35s ease" }}>
