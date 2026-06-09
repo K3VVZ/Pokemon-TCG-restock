@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
@@ -25,20 +25,11 @@ const ALERT_FEED = [
 
 const PLANS = [
   {
-    name: "Free",
-    price: "£0",
-    period: "forever",
-    features: ["3 product watchlist", "Daily digest email", "UK retailers only", "24hr alert delay"],
-    cta: "Get Started",
-    link: null,
-    highlight: false,
-  },
-  {
     name: "Tracker",
     price: "£7.99",
     period: "/ month",
     features: ["Unlimited watchlist", "Instant alerts < 2 min", "UK + Global retailers", "Discord notifications", "Price history"],
-    cta: "Start Free Trial",
+    cta: "Subscribe Now",
     link: "https://buy.stripe.com/bJe00l2UzemW3ov7Bi7Vm00",
     highlight: true,
   },
@@ -47,141 +38,25 @@ const PLANS = [
     price: "£14.99",
     period: "/ month",
     features: ["Everything in Tracker", "Stock quantity alerts", "Restock predictions", "Priority support", "Early access"],
-    cta: "Go Pro",
+    cta: "Subscribe Now",
     link: "https://buy.stripe.com/6oU28t8eT3Ii0cj7Bi7Vm01",
     highlight: false,
   },
 ];
 
-// Animated canvas background — slow flowing ink blobs
-function InkBackground() {
-  const canvasRef = useRef(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    let animId;
-    let t = 0;
-
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    resize();
-    window.addEventListener("resize", resize);
-
-    // Blob definitions
-    const blobs = [
-      { x: 0.15, y: 0.2,  r: 0.38, dx: 0.00012, dy: 0.00008,  dark: true  },
-      { x: 0.80, y: 0.75, r: 0.32, dx: -0.00010, dy: -0.00006, dark: true  },
-      { x: 0.55, y: 0.45, r: 0.28, dx: 0.00007,  dy: 0.00013,  dark: false },
-      { x: 0.30, y: 0.80, r: 0.22, dx: -0.00008, dy: 0.00009,  dark: false },
-      { x: 0.70, y: 0.15, r: 0.25, dx: 0.00009,  dy: -0.00011, dark: true  },
-    ];
-
-    const draw = () => {
-      t += 1;
-      const W = canvas.width, H = canvas.height;
-
-      ctx.clearRect(0, 0, W, H);
-
-      // White base
-      ctx.fillStyle = "#f8f8f8";
-      ctx.fillRect(0, 0, W, H);
-
-      blobs.forEach((b, i) => {
-        // Gently drift using sin/cos so they loop smoothly
-        const bx = (b.x + Math.sin(t * b.dx * 1000 + i * 1.3) * 0.18) * W;
-        const by = (b.y + Math.cos(t * b.dy * 1000 + i * 0.9) * 0.14) * H;
-        const br = b.r * Math.min(W, H);
-
-        const grad = ctx.createRadialGradient(bx, by, 0, bx, by, br);
-        if (b.dark) {
-          grad.addColorStop(0,   "rgba(0,0,0,0.55)");
-          grad.addColorStop(0.5, "rgba(0,0,0,0.18)");
-          grad.addColorStop(1,   "rgba(0,0,0,0)");
-        } else {
-          grad.addColorStop(0,   "rgba(220,220,220,0.7)");
-          grad.addColorStop(0.5, "rgba(200,200,200,0.25)");
-          grad.addColorStop(1,   "rgba(200,200,200,0)");
-        }
-
-        ctx.beginPath();
-        ctx.arc(bx, by, br, 0, Math.PI * 2);
-        ctx.fillStyle = grad;
-        ctx.fill();
-      });
-
-      // Subtle noise grain overlay via tiny dots
-      // (skipped for perf — CSS grain filter handles this)
-
-      animId = requestAnimationFrame(draw);
-    };
-
-    draw();
-    return () => {
-      cancelAnimationFrame(animId);
-      window.removeEventListener("resize", resize);
-    };
-  }, []);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      style={{
-        position: "fixed", inset: 0, width: "100%", height: "100%",
-        zIndex: 0, pointerEvents: "none",
-        filter: "blur(60px) contrast(1.1)",
-      }}
-    />
-  );
-}
-
-function Toast({ alert, onDismiss }) {
-  useEffect(() => { const t = setTimeout(onDismiss, 5000); return () => clearTimeout(t); }, []);
-  return (
-    <div style={{
-      position: "fixed", top: 20, right: 20, zIndex: 999,
-      background: "rgba(255,255,255,0.85)", backdropFilter: "blur(20px)",
-      border: "1px solid rgba(0,0,0,0.12)", borderRadius: 12,
-      padding: "14px 18px", minWidth: 270,
-      boxShadow: "0 8px 40px rgba(0,0,0,0.15)",
-      animation: "toastIn 0.3s cubic-bezier(.22,1,.36,1)",
-    }}>
-      <div style={{ fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#999", marginBottom: 5 }}>Restock Detected</div>
-      <div style={{ fontWeight: 600, fontSize: 14, color: "#111" }}>{alert.product}</div>
-      <div style={{ fontSize: 12, color: "#aaa", marginTop: 3 }}>{alert.retailer} · {alert.price}</div>
-    </div>
-  );
-}
-
-// Glass card wrapper
+// Simple white card wrapper
 const Glass = ({ children, style = {} }) => (
   <div style={{
-    background: "rgba(255,255,255,0.62)",
-    backdropFilter: "blur(24px) saturate(1.4)",
-    WebkitBackdropFilter: "blur(24px) saturate(1.4)",
-    border: "1px solid rgba(255,255,255,0.75)",
+    background: "#fff",
+    border: "1px solid #ebebeb",
     borderRadius: 14,
-    boxShadow: "0 4px 32px rgba(0,0,0,0.08)",
+    boxShadow: "0 2px 12px rgba(0,0,0,0.04)",
     ...style,
   }}>{children}</div>
 );
 
 export default function App() {
   const [tab, setTab] = useState("dashboard");
-  const [email, setEmail] = useState("");
-  const [subscribed, setSubscribed] = useState(false);
-
-  const handleSubscribe = async () => {
-    if (!email.includes("@")) return;
-    const { error } = await supabase
-      .from("subscribers")
-      .insert([{ email, plan: "free" }]);
-    if (!error) setSubscribed(true);
-    else if (error.code === "23505") setSubscribed(true); // already subscribed
-  };
-  const [toast, setToast] = useState(null);
   const [products, setProducts] = useState(PRODUCTS);
   const [watchlist, setWatchlist] = useState([1, 5]);
   const [alertFeed, setAlertFeed] = useState(ALERT_FEED);
@@ -192,7 +67,6 @@ export default function App() {
       const p = PRODUCTS[Math.floor(Math.random() * PRODUCTS.length)];
       const newAlert = { id: Date.now(), product: p.name, retailer: p.retailer, time: "just now", price: p.price };
       setAlertFeed(prev => [newAlert, ...prev.slice(0, 4)]);
-      setToast(newAlert);
       setLiveCount(c => c + Math.floor(Math.random() * 3 + 1));
       setProducts(prev => prev.map(x => x.id === p.id ? { ...x, status: "IN" } : x));
       setTimeout(() => setProducts(prev => prev.map(x => x.id === p.id ? { ...x, status: "OUT" } : x)), 8000);
@@ -203,16 +77,15 @@ export default function App() {
   const toggleWatch = id => setWatchlist(prev => prev.includes(id) ? prev.filter(w => w !== id) : [...prev, id]);
 
   return (
-    <div style={{ minHeight: "100vh", fontFamily: "'Instrument Sans', 'Helvetica Neue', Helvetica, sans-serif", position: "relative" }}>
+    <div style={{ minHeight: "100vh", background: "#fff", fontFamily: "'Instrument Sans', 'Helvetica Neue', Helvetica, sans-serif", position: "relative" }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
         @keyframes fadeUp  { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
-        @keyframes toastIn { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:translateX(0); } }
         @keyframes blink   { 0%,100%{opacity:1;} 50%{opacity:0.2;} }
         .nav-btn { background:none; border:none; cursor:pointer; font-family:inherit; transition:all 0.15s; }
         .row { transition:background 0.15s; }
-        .row:hover { background:rgba(0,0,0,0.03) !important; }
+        .row:hover { background:rgba(0,0,0,0.02) !important; }
         .btn { cursor:pointer; font-family:inherit; transition:all 0.15s; border:none; }
         .btn:hover { filter:brightness(0.92); }
         .plan { transition:transform 0.2s, box-shadow 0.2s; }
@@ -220,19 +93,13 @@ export default function App() {
         input:focus { outline:none; }
         ::-webkit-scrollbar { width:3px; }
         ::-webkit-scrollbar-thumb { background:rgba(0,0,0,0.15); border-radius:2px; }
-      `}</style>
-
-      <InkBackground />
-
-      {toast && <Toast alert={toast} onDismiss={() => setToast(null)} />}
+      `}</style>}
 
       {/* Header */}
       <header style={{
         position: "sticky", top: 0, zIndex: 100,
-        background: "rgba(255,255,255,0.55)",
-        backdropFilter: "blur(20px)",
-        WebkitBackdropFilter: "blur(20px)",
-        borderBottom: "1px solid rgba(0,0,0,0.08)",
+        background: "#fff",
+        borderBottom: "1px solid #ebebeb",
         padding: "0 40px", height: 56,
         display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
@@ -361,37 +228,21 @@ export default function App() {
                   ))}
                 </Glass>
 
-                {/* Email CTA */}
+                {/* Subscribe CTA */}
                 <div style={{
-                  background: "rgba(10,10,10,0.82)",
-                  backdropFilter: "blur(20px)",
-                  WebkitBackdropFilter: "blur(20px)",
-                  border: "1px solid rgba(255,255,255,0.08)",
+                  background: "#000",
+                  border: "1px solid #111",
                   borderRadius: 14, padding: "22px 20px", color: "#fff",
-                  boxShadow: "0 4px 32px rgba(0,0,0,0.18)",
+                  boxShadow: "0 4px 24px rgba(0,0,0,0.12)",
                 }}>
                   <div style={{ fontFamily: "'Instrument Serif', serif", fontStyle: "italic", fontSize: 19, marginBottom: 5 }}>Get instant alerts.</div>
-                  <div style={{ fontSize: 12, color: "#666", marginBottom: 16 }}>Free to start. No card needed.</div>
-                  {!subscribed ? (
-                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                      <input
-                        value={email}
-                        onChange={e => setEmail(e.target.value)}
-                        placeholder="your@email.com"
-                        style={{
-                          background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)",
-                          borderRadius: 8, padding: "10px 13px", fontSize: 13, color: "#fff",
-                          fontFamily: "inherit", width: "100%",
-                        }}
-                      />
-                      <button className="btn" onClick={handleSubscribe} style={{
-                        background: "#fff", color: "#111", borderRadius: 8,
-                        padding: "10px", fontSize: 13, fontWeight: 700, width: "100%",
-                      }}>Join Free →</button>
-                    </div>
-                  ) : (
-                    <div style={{ fontSize: 13, color: "#666", textAlign: "center", padding: "8px 0" }}>✓ You're in. Check your inbox.</div>
-                  )}
+                  <div style={{ fontSize: 12, color: "#888", marginBottom: 16 }}>Join hundreds of collectors tracking drops right now.</div>
+                  <a href="https://buy.stripe.com/bJe00l2UzemW3ov7Bi7Vm00" target="_blank" rel="noopener noreferrer" style={{
+                    display: "block", width: "100%", padding: "12px 0", borderRadius: 8,
+                    fontSize: 14, fontWeight: 700, textAlign: "center", textDecoration: "none",
+                    background: "#fff", color: "#000",
+                  }}>Subscribe Now →</a>
+                  <div style={{ fontSize: 11, color: "#555", textAlign: "center", marginTop: 10 }}>From £7.99/month · Cancel anytime</div>
                 </div>
               </div>
             </div>
@@ -530,9 +381,8 @@ export default function App() {
       {/* Footer */}
       <footer style={{
         position: "relative", zIndex: 1,
-        borderTop: "1px solid rgba(0,0,0,0.06)",
-        background: "rgba(255,255,255,0.4)",
-        backdropFilter: "blur(20px)",
+        borderTop: "1px solid #ebebeb",
+        background: "#fff",
         padding: "20px 40px",
         display: "flex", justifyContent: "space-between", alignItems: "center",
       }}>
