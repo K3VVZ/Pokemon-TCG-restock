@@ -30,6 +30,7 @@ const PLANS = [
     period: "forever",
     features: ["3 product watchlist", "Daily digest email", "UK retailers only", "24hr alert delay"],
     cta: "Get Started",
+    link: null,
     highlight: false,
   },
   {
@@ -38,14 +39,16 @@ const PLANS = [
     period: "/ month",
     features: ["Unlimited watchlist", "Instant alerts < 2 min", "UK + Global retailers", "Discord notifications", "Price history"],
     cta: "Start Free Trial",
+    link: "https://buy.stripe.com/bJe00l2UzemW3ov7Bi7Vm00",
     highlight: true,
   },
   {
     name: "Pro",
     price: "£14.99",
     period: "/ month",
-    features: ["Everything in Reseller", "Stock quantity alerts", "Restock predictions", "Priority support", "Early access"],
+    features: ["Everything in Tracker", "Stock quantity alerts", "Restock predictions", "Priority support", "Early access"],
     cta: "Go Pro",
+    link: "https://buy.stripe.com/6oU28t8eT3Ii0cj7Bi7Vm01",
     highlight: false,
   },
 ];
@@ -485,12 +488,20 @@ export default function App() {
                       </div>
                     ))}
                   </div>
-                  <button className="btn" style={{
-                    width: "100%", padding: "11px 0", borderRadius: 8, fontSize: 13, fontWeight: 700,
-                    fontFamily: "inherit",
-                    background: plan.highlight ? "#fff" : "#111",
-                    color: plan.highlight ? "#111" : "#fff",
-                  }}>{plan.cta}</button>
+                  {plan.link ? (
+                    <a href={plan.link} target="_blank" rel="noopener noreferrer" style={{
+                      display: "block", width: "100%", padding: "11px 0", borderRadius: 8, fontSize: 13, fontWeight: 700,
+                      fontFamily: "inherit", textAlign: "center", textDecoration: "none",
+                      background: plan.highlight ? "#fff" : "#111",
+                      color: plan.highlight ? "#111" : "#fff",
+                    }}>{plan.cta}</a>
+                  ) : (
+                    <button className="btn" style={{
+                      width: "100%", padding: "11px 0", borderRadius: 8, fontSize: 13, fontWeight: 700,
+                      fontFamily: "inherit",
+                      background: "#111", color: "#fff",
+                    }}>{plan.cta}</button>
+                  )}
                 </div>
               ))}
             </div>
@@ -500,4 +511,3 @@ export default function App() {
     </div>
   );
 }
-
