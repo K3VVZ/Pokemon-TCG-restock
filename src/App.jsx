@@ -237,8 +237,8 @@ export default function App() {
         display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <span style={{ fontSize: 18 }}>⚡</span>
           <span style={{ fontFamily: "'Instrument Serif', serif", fontStyle: "italic", fontSize: 21, letterSpacing: "-0.02em", color: "#111" }}>TCGRestock</span>
-          <span style={{ fontSize: 9, background: "#111", color: "#fff", borderRadius: 4, padding: "2px 7px", fontWeight: 700, letterSpacing: "0.08em" }}>BETA</span>
         </div>
 
         <nav style={{ display: "flex", gap: 2 }}>
@@ -267,16 +267,24 @@ export default function App() {
               <h1 style={{ fontFamily: "'Instrument Serif', serif", fontStyle: "italic", fontSize: 42, fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.1, color: "#111" }}>
                 Never miss a restock.
               </h1>
-              <p style={{ color: "#888", fontSize: 14, marginTop: 10 }}>Tracking 2,400+ products across 18 UK & global retailers.</p>
+              <p style={{ color: "#888", fontSize: 14, marginTop: 10 }}>Tracking Prismatic Evolutions, Surging Sparks, and every hot set across 21 UK & global retailers.</p>
+              <div style={{ display: "flex", alignItems: "center", gap: 16, marginTop: 14 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "#666", background: "rgba(255,255,255,0.6)", backdropFilter: "blur(8px)", border: "1px solid rgba(0,0,0,0.08)", borderRadius: 20, padding: "5px 12px" }}>
+                  <span>👥</span> <span><strong style={{ color: "#111" }}>{liveCount.toLocaleString()}</strong> collectors signed up</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "#666", background: "rgba(255,255,255,0.6)", backdropFilter: "blur(8px)", border: "1px solid rgba(0,0,0,0.08)", borderRadius: 20, padding: "5px 12px" }}>
+                  <span>👾</span> <span>As seen on <strong style={{ color: "#111" }}>r/PokemonTCG</strong></span>
+                </div>
+              </div>
             </div>
 
             {/* Stats */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12, marginBottom: 24 }}>
               {[
                 { label: "Products Tracked", value: "2,400+" },
-                { label: "Retailers", value: "18" },
+                { label: "Retailers", value: "21" },
                 { label: "Avg Alert Speed", value: "< 2 min" },
-                { label: "Restocks Today", value: "34" },
+                { label: "Restocks This Week", value: "143" },
               ].map(s => (
                 <Glass key={s.label} style={{ padding: "18px 20px" }}>
                   <div style={{ fontSize: 26, fontWeight: 700, letterSpacing: "-0.03em", color: "#111" }}>{s.value}</div>
@@ -284,6 +292,16 @@ export default function App() {
                 </Glass>
               ))}
             </div>
+
+            {/* Recent wins ticker */}
+            <Glass style={{ padding: "12px 20px", marginBottom: 16, display: "flex", alignItems: "center", gap: 10, overflow: "hidden" }}>
+              <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#aaa", flexShrink: 0 }}>Recent Wins</span>
+              <div style={{ display: "flex", gap: 12, overflow: "hidden" }}>
+                {["Prismatic Evolutions restocked at Smyths 3x this week", "Surging Sparks back at Zatu · £109.99", "Paldean Fates dropped at Pokémon Center · gone in 4 mins"].map((win, i) => (
+                  <span key={i} style={{ fontSize: 12, color: "#555", whiteSpace: "nowrap", padding: "3px 10px", background: "rgba(0,0,0,0.04)", borderRadius: 20 }}>⚡ {win}</span>
+                ))}
+              </div>
+            </Glass>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 310px", gap: 16 }}>
               {/* Product table */}
@@ -508,6 +526,28 @@ export default function App() {
           </div>
         )}
       </main>
+
+      {/* Footer */}
+      <footer style={{
+        position: "relative", zIndex: 1,
+        borderTop: "1px solid rgba(0,0,0,0.06)",
+        background: "rgba(255,255,255,0.4)",
+        backdropFilter: "blur(20px)",
+        padding: "20px 40px",
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span>⚡</span>
+          <span style={{ fontFamily: "'Instrument Serif', serif", fontStyle: "italic", fontSize: 15, color: "#111" }}>TCGRestock</span>
+          <span style={{ fontSize: 11, color: "#bbb" }}>· Built for collectors & resellers</span>
+        </div>
+        <div style={{ fontSize: 11, color: "#bbb" }}>© 2026 TCGRestock · All rights reserved</div>
+        <div style={{ display: "flex", gap: 16 }}>
+          {["r/PokemonTCG", "Privacy", "Contact"].map(l => (
+            <span key={l} style={{ fontSize: 11, color: "#aaa", cursor: "pointer" }}>{l}</span>
+          ))}
+        </div>
+      </footer>
     </div>
   );
 }
