@@ -68,7 +68,7 @@ const TIERS = [
   },
   {
     name: "Pro",
-    price: "£14.99",
+    price: "£13.99",
     blurb: "For people who need to be first through the door.",
     features: [
       "Everything in Tracker",
@@ -504,3 +504,4 @@ export default function TCGRestock() {
     </div>
   );
 }
+
